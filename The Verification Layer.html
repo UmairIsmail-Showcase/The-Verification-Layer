@@ -1,0 +1,2651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Verification Layer Certification</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+        
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100%;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, #1e1b4b 0%, transparent 70%),
+                        radial-gradient(circle at 80% 20%, #312e81 0%, transparent 70%),
+                        radial-gradient(circle at 40% 40%, #1e3a8a 0%, transparent 70%);
+            animation: bgShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes bgShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Glassmorphism header */
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .header h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin: 0 0 15px 0;
+            background: linear-gradient(135deg, #a5b4fc, #c7d2fe, #ddd6fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 2s ease-in-out infinite alternate;
+            letter-spacing: -0.02em;
+        }
+        
+        @keyframes textGlow {
+            from { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.8)); }
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+        
+        /* XP and Level System */
+        .player-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 20px 30px;
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #06b6d4;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .target-audience {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 30px;
+        }
+        
+        .audience-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .tag {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.5);
+        }
+        
+        /* Module Cards with Neumorphism */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin: 50px 0;
+        }
+        
+        .module-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 40px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .module-card:hover::before {
+            opacity: 1;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.4);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .module-card.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: grayscale(80%);
+            position: relative;
+        }
+        
+        .module-card.locked::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 32px;
+            backdrop-filter: blur(2px);
+        }
+        
+        .module-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .module-card.completed {
+            border-color: #10b981;
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+        }
+        
+        .module-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .module-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 2rem;
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .module-card:hover .module-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+        
+        .module-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+        
+        .module-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Animated Progress Ring */
+        .progress-ring {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 20px auto;
+        }
+        
+        .progress-ring svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 6;
+        }
+        
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #06b6d4;
+        }
+        
+        /* XP Bar */
+        .xp-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .xp-fill {
+            background: linear-gradient(90deg, #06b6d4, #6366f1, #8b5cf6);
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+        
+        .xp-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: xpShine 2s infinite;
+        }
+        
+        @keyframes xpShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .module-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .stat-icon {
+            font-size: 1.1rem;
+        }
+        
+        /* Animated CTA Button */
+        .start-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+            letter-spacing: -0.01em;
+        }
+        
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .start-btn:hover::before {
+            left: 100%;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.5);
+        }
+        
+        .start-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .start-btn.completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        /* Achievement System */
+        .achievements {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .achievement {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .achievement.unlocked {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            animation: achievementPulse 2s infinite;
+        }
+        
+        @keyframes achievementPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Value Proposition with Parallax */
+        .value-prop {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 60px 40px;
+            text-align: center;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .value-prop h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ffffff, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .value-prop p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .benefit-item {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: left;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .benefit-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4);
+        }
+        
+        .benefit-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.3);
+        }
+        
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .benefit-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .benefit-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        
+        /* Enhanced Simulation Overlay */
+        .simulation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .simulation-content {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 50px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+        
+        /* Gamified Scenarios */
+        .scenario {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 24px;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .scenario-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+        
+        .question {
+            margin: 25px 0;
+        }
+        
+        .question h4 {
+            color: #06b6d4;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .options {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.3s ease;
+        }
+        
+        .option:hover::before {
+            left: 100%;
+        }
+        
+        .option:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateX(10px);
+        }
+        
+        .option.selected {
+            border-color: #06b6d4;
+            background: rgba(6, 182, 212, 0.1);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+        }
+        
+        .option.correct {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            animation: correctPulse 0.6s ease;
+        }
+        
+        .option.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            animation: incorrectShake 0.6s ease;
+        }
+        
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .feedback {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            display: none;
+            animation: feedbackSlide 0.5s ease;
+        }
+        
+        @keyframes feedbackSlide {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .check-answer-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .check-answer-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        .check-answer-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 40px 25px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .modules-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .module-card {
+                padding: 30px 25px;
+            }
+            
+            .player-stats {
+                gap: 15px;
+            }
+            
+            .simulation-content {
+                padding: 30px 25px;
+                margin: 20px;
+            }
+        }
+        
+        /* Particle System */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(99, 102, 241, 0.6);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+    
+    <main class="container">
+        <header class="header">
+            <h1>The Verification Layer Certification</h1>
+            <p class="subtitle">Master AI Auditing & Human Accountability</p>
+            
+            <div class="player-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="playerLevel">1</div>
+                    <div class="stat-label">Level</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="playerXP">0</div>
+                    <div class="stat-label">XP</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="playerStreak">0</div>
+                    <div class="stat-label">Streak</div>
+                </div>
+            </div>
+            
+            <div class="achievements" id="achievements">
+                <div class="achievement" title="First Steps">🎯</div>
+                <div class="achievement" title="Verification Master">🔍</div>
+                <div class="achievement" title="Audit Expert">📋</div>
+                <div class="achievement" title="Perfect Score">⭐</div>
+                <div class="achievement" title="Speed Demon">⚡</div>
+            </div>
+            
+            <div class="target-audience">
+                <h3 style="color: rgba(255, 255, 255, 0.9); margin-bottom: 15px;">Target Audience</h3>
+                <div class="audience-tags">
+                    <span class="tag">Analysts</span>
+                    <span class="tag">Editors</span>
+                    <span class="tag">Auditors</span>
+                    <span class="tag">Middle Management</span>
+                </div>
+            </div>
+        </header>
+        
+        <section class="modules-grid">
+            <article class="module-card" data-module="verification">
+                <div class="module-header">
+                    <div class="module-icon">🔍</div>
+                    <div>
+                        <h2 class="module-title">Prompt Verification & Auditing</h2>
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 5px;">Module A</div>
+                    </div>
+                </div>
+                <p class="module-description">
+                    Deep-dive into hallucination detection, recognizing subtle AI bias, and verifying external data against internal sources using RAG principles.
+                </p>
+                
+                <div class="progress-ring">
+                    <svg>
+                        <defs>
+                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                <stop offset="100%" style="stop-color:#6366f1"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-ring-bg" cx="40" cy="40" r="36"/>
+                        <circle class="progress-ring-fill" cx="40" cy="40" r="36" 
+                                stroke-dasharray="0 226" data-progress="0"/>
+                    </svg>
+                    <div class="progress-text">🔒</div>
+                </div>
+                
+                <div class="xp-bar">
+                    <div class="xp-fill" style="width: 0%"></div>
+                </div>
+                
+                <div class="module-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">⏱️</span>
+                        <span>5-10 minutes</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🎯</span>
+                        <span>+500 XP</span>
+                    </div>
+                </div>
+                <button class="start-btn" onclick="startModule('verification')">
+                    <span>Start Module A</span>
+                </button>
+            </article>
+            
+            <article class="module-card locked" data-module="auditing">
+                <div class="module-header">
+                    <div class="module-icon">📋</div>
+                    <div>
+                        <h2 class="module-title">Structured Auditing Playbooks</h2>
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 5px;">Module B</div>
+                    </div>
+                </div>
+                <p class="module-description">
+                    Interactive simulations where you audit AI-generated content like policy drafts and financial reports for compliance and factual errors.
+                </p>
+                
+                <div class="progress-ring">
+                    <svg>
+                        <circle class="progress-ring-bg" cx="40" cy="40" r="36"/>
+                        <circle class="progress-ring-fill" cx="40" cy="40" r="36" 
+                                stroke-dasharray="0 226" data-progress="0"/>
+                    </svg>
+                    <div class="progress-text">🔒</div>
+                </div>
+                
+                <div class="xp-bar">
+                    <div class="xp-fill" style="width: 0%"></div>
+                </div>
+                
+                <div class="module-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">⏱️</span>
+                        <span>3 hours</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🎯</span>
+                        <span>+750 XP</span>
+                    </div>
+                </div>
+                <button class="start-btn" disabled onclick="startModule('auditing')">
+                    <span>🔒 Complete Module A First</span>
+                </button>
+            </article>
+        </section>
+        
+        <!-- Glossary Toggle Button -->
+        <div class="glossary-toggle" style="position: fixed; bottom: 30px; right: 30px; z-index: 999;">
+            <button onclick="toggleGlossary()" class="glossary-btn" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;">
+                📚
+            </button>
+        </div>
+
+        <section class="value-prop">
+            <h2>Value Proposition for Business</h2>
+            <p>
+                Ensures human accountability remains the "Verification Layer," preventing costly errors, 
+                compliance failures, and reputational damage from unreliable AI outputs.
+            </p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <span class="benefit-icon">💰</span>
+                    <div class="benefit-title">Cost Prevention</div>
+                    <div class="benefit-desc">Avoid expensive mistakes from AI hallucinations and errors</div>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">⚖️</span>
+                    <div class="benefit-title">Compliance Assurance</div>
+                    <div class="benefit-desc">Maintain regulatory standards with human oversight</div>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">🛡️</span>
+                    <div class="benefit-title">Reputation Protection</div>
+                    <div class="benefit-desc">Safeguard brand integrity through verified content</div>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">🎯</span>
+                    <div class="benefit-title">Quality Control</div>
+                    <div class="benefit-desc">Establish systematic verification processes</div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <div class="simulation-overlay" id="simulationOverlay">
+        <div class="simulation-content">
+            <button class="close-btn" onclick="closeSimulation()">&times;</button>
+            <div id="simulationContent"></div>
+        </div>
+    </div>
+    
+    <!-- Glossary Overlay -->
+    <div class="glossary-overlay" id="glossaryOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 1001; animation: fadeIn 0.3s ease;">
+        <div class="glossary-content" style="background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 32px; padding: 50px; max-width: 800px; width: 90%; max-height: 90%; overflow-y: auto; animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <button class="close-btn" onclick="closeGlossary()" style="position: absolute; top: 20px; right: 25px; background: rgba(255, 255, 255, 0.1); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: rgba(255, 255, 255, 0.7); transition: all 0.3s ease;">&times;</button>
+            
+            <h2 style="color: #a5b4fc; font-size: 2.5rem; margin-bottom: 30px; text-align: center;">📚 Course Glossary</h2>
+            
+            <div class="glossary-search" style="margin-bottom: 30px;">
+                <input type="text" id="glossarySearch" placeholder="Search terms..." onkeyup="filterGlossary()" style="width: 100%; padding: 15px 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-size: 1rem;">
+            </div>
+            
+            <div id="glossaryTerms" class="glossary-terms">
+                <!-- Terms will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Game State
+        let gameState = {
+            level: 1,
+            xp: 0,
+            streak: 0,
+            achievements: [],
+            moduleProgress: {
+                verification: 0,
+                auditing: 0
+            }
+        };
+        
+        let currentModule = null;
+        let startTime = null;
+        
+        // XP Thresholds for leveling up
+        const xpThresholds = [0, 100, 300, 600, 1000, 1500, 2100, 2800];
+        
+        const modules = {
+            verification: {
+                title: "Prompt Verification & Auditing",
+                xpReward: 500,
+                learningMaterial: {
+                    title: "Master the Art of AI Verification",
+                    subtitle: "Learn to catch AI errors before they become costly mistakes",
+                    sections: [
+                        {
+                            title: "🎯 What is AI Hallucination?",
+                            icon: "🤖",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "AI hallucination occurs when artificial intelligence generates information that sounds credible but is completely false or fabricated. Think of it as AI 'making things up' confidently."
+                                },
+                                {
+                                    type: "example",
+                                    title: "Real-World Example",
+                                    text: "An AI claims: 'According to our Q3 financial report, revenue increased 47% to $2.3M.' But when you check, Q3 revenue was actually $1.8M (only 12% increase). The AI fabricated both the percentage and amount!"
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "Why is this dangerous for businesses?",
+                                    options: [
+                                        "It could mislead investors and stakeholders",
+                                        "It might violate financial reporting regulations", 
+                                        "It damages company credibility and trust",
+                                        "All of the above - it's extremely risky!"
+                                    ],
+                                    correct: 3,
+                                    feedback: "Exactly! AI hallucinations in business contexts can lead to investor fraud, regulatory violations, and destroyed credibility. This is why human verification is critical."
+                                }
+                            ]
+                        },
+                        {
+                            title: "🔍 The Verification Layer Process",
+                            icon: "🛡️",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "The Verification Layer is your systematic defense against AI errors. It's a human-driven process that validates every AI output before it's used for business decisions."
+                                },
+                                {
+                                    type: "steps",
+                                    title: "The 4-Step Verification Process",
+                                    steps: [
+                                        "🔍 **Source Check**: Does the referenced document/data actually exist?",
+                                        "📊 **Content Validation**: Does the source contain what the AI claims?",
+                                        "🧮 **Math Verification**: Are calculations and percentages correct?",
+                                        "⚖️ **Logic Review**: Does the conclusion make sense given the data?"
+                                    ]
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "An AI says 'Customer satisfaction increased 25% based on survey S-2024-08.' What's your FIRST verification step?",
+                                    options: [
+                                        "Check if the 25% calculation is correct",
+                                        "Verify that survey S-2024-08 actually exists",
+                                        "Ask colleagues if this sounds right",
+                                        "Accept it since 25% seems reasonable"
+                                    ],
+                                    correct: 1,
+                                    feedback: "Perfect! Always start by confirming the source exists. AI can hallucinate document names, survey numbers, and data references that sound real but don't exist."
+                                }
+                            ]
+                        },
+                        {
+                            title: "⚠️ Spotting Subtle AI Bias",
+                            icon: "🎭",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "AI bias isn't always obvious. It often appears as 'reasonable preferences' that actually discriminate against certain groups, creating legal and ethical risks."
+                                },
+                                {
+                                    type: "example",
+                                    title: "Hidden Bias Example",
+                                    text: "AI-generated hiring policy: 'We prefer candidates with traditional four-year degrees from established universities for leadership roles.' Sounds reasonable, right? Wrong! This excludes qualified candidates who took alternative paths."
+                                },
+                                {
+                                    type: "checklist",
+                                    title: "Bias Detection Checklist",
+                                    items: [
+                                        "Does this exclude qualified people based on background?",
+                                        "Are there coded words like 'traditional' or 'established'?",
+                                        "Could this disproportionately affect certain groups?",
+                                        "Does this create unnecessary barriers to opportunity?"
+                                    ]
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "Which AI-generated policy statement shows bias?",
+                                    options: [
+                                        "'Candidates must demonstrate relevant skills and experience'",
+                                        "'We value diverse perspectives and backgrounds'",
+                                        "'Preference given to candidates from prestigious institutions'",
+                                        "'All qualified applicants will be considered equally'"
+                                    ],
+                                    correct: 2,
+                                    feedback: "Correct! 'Prestigious institutions' creates educational elitism and excludes qualified candidates from diverse backgrounds. This could violate equal opportunity laws."
+                                }
+                            ]
+                        },
+                        {
+                            title: "📚 RAG System Verification",
+                            icon: "🔗",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "RAG (Retrieval-Augmented Generation) systems pull information from databases before generating responses. But they can still make mistakes in retrieval or interpretation."
+                                },
+                                {
+                                    type: "warning",
+                                    title: "Common RAG Failures",
+                                    text: "❌ Retrieving outdated documents\n❌ Misinterpreting retrieved content\n❌ Hallucinating document references\n❌ Mixing information from multiple sources incorrectly"
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "AI claims: 'Per policy P-2024-15, remote work is limited to 2 days/week.' How do you verify this RAG-based claim?",
+                                    options: [
+                                        "Trust it since RAG systems are usually accurate",
+                                        "Check that document P-2024-15 exists AND contains this exact policy",
+                                        "Ask HR if this sounds like current policy",
+                                        "Assume the AI retrieved the right information"
+                                    ],
+                                    correct: 1,
+                                    feedback: "Excellent! RAG verification requires checking both document existence AND content accuracy. AI can hallucinate document names or misinterpret what it retrieved."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                scenarios: [
+                    {
+                        title: "Detecting AI Hallucinations",
+                        description: "An AI system has generated a financial report claiming your company's Q3 revenue increased by 47%. You need to verify this claim.",
+                        question: "What should be your first step in verifying this AI-generated claim?",
+                        options: [
+                            "Accept the report since AI is generally accurate",
+                            "Cross-reference with internal financial databases and source documents",
+                            "Ask the AI to regenerate the report",
+                            "Forward the report to stakeholders immediately"
+                        ],
+                        correct: 1,
+                        xp: 100,
+                        feedback: "🎯 Excellent! Always cross-reference AI outputs with authoritative internal sources. This is the foundation of the verification layer - never trust AI outputs without validation against known reliable data sources."
+                    },
+                    {
+                        title: "Identifying Subtle AI Bias",
+                        description: "An AI has drafted a hiring policy that states: 'Candidates with traditional educational backgrounds from established universities are preferred for leadership roles.'",
+                        question: "What type of bias does this statement potentially introduce?",
+                        options: [
+                            "No bias - this is a reasonable preference",
+                            "Educational and socioeconomic bias that could exclude qualified diverse candidates",
+                            "Age bias only",
+                            "Geographic bias only"
+                        ],
+                        correct: 1,
+                        xp: 150,
+                        feedback: "🔥 Perfect detection! This statement introduces educational and socioeconomic bias. The verification layer must identify such subtle biases that could lead to discriminatory practices and legal issues."
+                    },
+                    {
+                        title: "RAG Verification Challenge",
+                        description: "An AI claims: 'According to our internal policy document P-2024-15, remote work is limited to 2 days per week.' You need to verify this against your RAG system.",
+                        question: "What's the most critical verification step for RAG-based claims?",
+                        options: [
+                            "Check if document P-2024-15 exists and contains this exact information",
+                            "Assume the AI correctly retrieved the information",
+                            "Ask colleagues if this sounds right",
+                            "Check only the document title for relevance"
+                        ],
+                        correct: 0,
+                        xp: 200,
+                        feedback: "🚀 Outstanding! RAG verification requires confirming both document existence AND content accuracy. AI can hallucinate document references or misinterpret retrieved content."
+                    },
+                    {
+                        title: "Data Source Validation",
+                        description: "An AI report states: 'Customer satisfaction increased 23% based on our latest survey of 10,000 customers conducted last month.'",
+                        question: "Which verification step is most crucial for this claim?",
+                        options: [
+                            "Verify the survey actually occurred, sample size, methodology, and calculation accuracy",
+                            "Just check if 23% sounds reasonable",
+                            "Confirm we have 10,000 customers total",
+                            "Ask the AI to provide more details"
+                        ],
+                        correct: 0,
+                        xp: 150,
+                        feedback: "💎 Masterful verification! Always validate the entire chain: survey existence, methodology, sample size, data accuracy, and calculation correctness. Each link can introduce errors."
+                    }
+                ]
+            },
+            auditing: {
+                title: "Structured Auditing Playbooks",
+                xpReward: 750,
+                learningMaterial: {
+                    title: "Master Systematic AI Auditing",
+                    subtitle: "Build bulletproof processes to catch errors before they cause damage",
+                    sections: [
+                        {
+                            title: "🏗️ What is Structured Auditing?",
+                            icon: "📋",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "Structured auditing is a systematic, repeatable process for reviewing AI outputs across multiple dimensions: accuracy, compliance, risk, and business impact. It's your quality control system."
+                                },
+                                {
+                                    type: "comparison",
+                                    title: "Random Checking vs. Structured Auditing",
+                                    left: {
+                                        title: "❌ Random Checking",
+                                        items: ["Inconsistent coverage", "Misses critical errors", "No systematic approach", "Hard to improve"]
+                                    },
+                                    right: {
+                                        title: "✅ Structured Auditing", 
+                                        items: ["Complete coverage", "Catches systematic issues", "Repeatable process", "Continuous improvement"]
+                                    }
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "Why is structured auditing essential for business AI use?",
+                                    options: [
+                                        "It makes the process faster",
+                                        "It ensures consistent quality and reduces legal risks",
+                                        "It's required by law",
+                                        "It makes AI more accurate"
+                                    ],
+                                    correct: 1,
+                                    feedback: "Exactly! Structured auditing ensures consistent quality control and reduces legal/compliance risks by systematically catching errors before they impact business operations."
+                                }
+                            ]
+                        },
+                        {
+                            title: "⚖️ Compliance & Legal Auditing",
+                            icon: "🏛️",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "AI-generated content must comply with laws, regulations, and company policies. A single compliance failure can result in massive fines, lawsuits, and regulatory action."
+                                },
+                                {
+                                    type: "example",
+                                    title: "Real Compliance Disaster",
+                                    text: "An AI generates a privacy policy stating: 'We use customer data as needed for business purposes.' This vague language violates GDPR, potentially resulting in fines up to 4% of annual revenue!"
+                                },
+                                {
+                                    type: "checklist",
+                                    title: "Compliance Audit Checklist",
+                                    items: [
+                                        "🔍 **Legal Requirements**: Does this meet all applicable laws?",
+                                        "📋 **Company Policy**: Does this align with internal guidelines?",
+                                        "🌍 **Jurisdictional Rules**: Does this work in all operating regions?",
+                                        "📝 **Documentation**: Are all required disclosures included?"
+                                    ]
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "AI drafts: 'Employee data may be shared with business partners when beneficial.' What's the main compliance issue?",
+                                    options: [
+                                        "It's too transparent about data sharing",
+                                        "It lacks specific consent and purpose requirements",
+                                        "It doesn't mention enough partners",
+                                        "It's perfectly compliant"
+                                    ],
+                                    correct: 1,
+                                    feedback: "Perfect! This violates privacy laws requiring explicit consent, specific purposes, and user control over data sharing. Vague language creates massive legal liability."
+                                }
+                            ]
+                        },
+                        {
+                            title: "🧮 Mathematical & Data Auditing",
+                            icon: "📊",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "AI frequently makes calculation errors that can mislead stakeholders and damage credibility. Every number, percentage, and trend claim must be independently verified."
+                                },
+                                {
+                                    type: "example",
+                                    title: "Costly Math Error",
+                                    text: "AI reports: 'Marketing spend decreased 15% to $50K this quarter.' Last quarter was $45K. The error: $50K vs $45K is an 11% INCREASE, not a 15% decrease! This could mislead the board about budget performance."
+                                },
+                                {
+                                    type: "steps",
+                                    title: "Mathematical Audit Process",
+                                    steps: [
+                                        "📊 **Verify Source Data**: Confirm the baseline numbers are correct",
+                                        "🧮 **Recalculate**: Independently verify all percentages and calculations", 
+                                        "📈 **Check Trends**: Ensure directional claims (increase/decrease) are accurate",
+                                        "🎯 **Validate Context**: Confirm the comparison period and methodology"
+                                    ]
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "AI claims: 'Customer churn improved from 15% to 12% (20% improvement).' Is this calculation correct?",
+                                    options: [
+                                        "Yes, 20% improvement is correct",
+                                        "No, it should be 3% improvement",
+                                        "No, it should be 25% improvement", 
+                                        "The calculation is correct"
+                                    ],
+                                    correct: 2,
+                                    feedback: "Correct! From 15% to 12% is a 3 percentage point decrease, but a 20% relative improvement (3/15 = 0.20). However, the AI should clarify this is a 20% relative improvement, not absolute."
+                                }
+                            ]
+                        },
+                        {
+                            title: "🎯 Risk Assessment Integration",
+                            icon: "⚠️",
+                            content: [
+                                {
+                                    type: "explanation",
+                                    text: "Auditing isn't just about accuracy—it's about identifying risks and ensuring AI outputs account for real-world constraints, dependencies, and potential failures."
+                                },
+                                {
+                                    type: "example",
+                                    title: "Missing Risk Assessment",
+                                    text: "AI creates project timeline: 'Phase 1: 30 days, Phase 2: 45 days, Phase 3: 60 days. Total: 135 days.' Missing: buffer time for dependencies, delays, and risk mitigation. Real projects need 20-30% buffer time."
+                                },
+                                {
+                                    type: "framework",
+                                    title: "Risk Assessment Framework",
+                                    categories: [
+                                        "🔗 **Dependencies**: What could delay or block progress?",
+                                        "📊 **Data Quality**: How reliable are the underlying assumptions?",
+                                        "👥 **Human Factors**: Are resource constraints considered?",
+                                        "🌍 **External Factors**: What outside forces could impact outcomes?"
+                                    ]
+                                },
+                                {
+                                    type: "interactive",
+                                    question: "AI estimates project completion in 90 days with no buffer time. What's the main auditing concern?",
+                                    options: [
+                                        "90 days is too long for any project",
+                                        "The estimate lacks risk mitigation and buffer time",
+                                        "AI estimates are always accurate",
+                                        "The timeline should be shorter"
+                                    ],
+                                    correct: 1,
+                                    feedback: "Excellent! AI often creates overly optimistic timelines without accounting for real-world risks, dependencies, and delays. Proper auditing ensures realistic planning."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                scenarios: [
+                    {
+                        title: "Policy Draft Compliance Check",
+                        description: "You're auditing an AI-generated employee handbook section on remote work policies. The AI states: 'Employees may work remotely without any documentation or approval process.' This policy will affect 500+ employees and must comply with labor laws across 3 states.",
+                        question: "From a compliance perspective, what's the primary concern with this policy?",
+                        options: [
+                            "It's too restrictive for modern workplaces",
+                            "It lacks necessary oversight and documentation for legal/tax compliance",
+                            "It doesn't mention specific remote work tools",
+                            "It's perfectly acceptable as written"
+                        ],
+                        correct: 1,
+                        xp: 150,
+                        feedback: "🎯 Excellent compliance catch! This policy lacks essential elements like documentation for tax purposes, security protocols, and legal liability coverage.",
+                        keyLearning: "Structured auditing requires checking policies against legal frameworks, not just business preferences. Always verify compliance requirements first."
+                    },
+                    {
+                        title: "Financial Report Mathematical Verification",
+                        description: "An AI has generated a quarterly expense report showing 'Marketing expenses: $50,000 (15% decrease from last quarter)'. Your internal records show last quarter's marketing expenses were $45,000. This report will be presented to the board and investors.",
+                        question: "What's wrong with this AI-generated statement?",
+                        options: [
+                            "Nothing - the numbers are correct",
+                            "The percentage calculation is incorrect - it should show an 11% increase",
+                            "The current quarter amount is wrong",
+                            "The comparison period is incorrect"
+                        ],
+                        correct: 1,
+                        xp: 200,
+                        feedback: "🔥 Perfect mathematical verification! $50,000 vs $45,000 is an 11% increase, not a 15% decrease. AI calculation errors can be subtle but costly.",
+                        keyLearning: "Always verify mathematical calculations independently. AI can make basic arithmetic errors that have major business implications."
+                    },
+                    {
+                        title: "Regulatory Compliance Deep Audit",
+                        description: "An AI-drafted privacy policy states: 'We collect and use customer data as needed for business purposes and may share it with partners when beneficial.' Your company operates in the EU and California, serving 50,000+ users.",
+                        question: "What major compliance issue does this create?",
+                        options: [
+                            "It's too transparent about data usage",
+                            "It violates GDPR/privacy laws by being too vague about consent and data usage",
+                            "It doesn't mention enough business purposes",
+                            "It's perfectly compliant"
+                        ],
+                        correct: 1,
+                        xp: 250,
+                        feedback: "🚀 Outstanding regulatory awareness! This violates GDPR and privacy laws requiring specific consent, clear purposes, and explicit user control over data sharing.",
+                        keyLearning: "Privacy regulations require explicit, granular consent. Vague language creates legal liability and potential fines."
+                    },
+                    {
+                        title: "Contract Terms Verification",
+                        description: "An AI has drafted a vendor contract stating: 'Payment terms are Net 30 days with a 2% early payment discount if paid within 10 days.' However, your company policy requires all vendor payments to be Net 45 days minimum to maintain cash flow.",
+                        question: "What's the systematic auditing approach here?",
+                        options: [
+                            "Accept the AI terms since they're favorable to vendors",
+                            "Flag the policy conflict and verify against company financial guidelines before approval",
+                            "Change only the discount percentage",
+                            "Assume the AI knows best practices"
+                        ],
+                        correct: 1,
+                        xp: 175,
+                        feedback: "💎 Excellent systematic thinking! Always cross-reference AI outputs against internal policies and financial constraints before approval.",
+                        keyLearning: "Structured auditing means checking AI outputs against multiple layers: legal compliance, company policy, and operational constraints."
+                    },
+                    {
+                        title: "Data Accuracy Cross-Verification",
+                        description: "An AI report claims: 'Customer churn rate decreased by 8% this quarter to 12%, indicating improved retention strategies.' Your CRM shows 847 customers lost out of 6,200 total customers this quarter.",
+                        question: "What's your verification finding?",
+                        options: [
+                            "The AI report is accurate",
+                            "The churn rate calculation is wrong - it should be 13.7%, not 12%",
+                            "The improvement claim is unverifiable without previous data",
+                            "Both the calculation and improvement claim need verification"
+                        ],
+                        correct: 3,
+                        xp: 225,
+                        feedback: "🏆 Master-level auditing! You caught both issues: 847/6200 = 13.7% (not 12%), AND the improvement claim needs baseline data verification.",
+                        keyLearning: "Comprehensive auditing checks both current accuracy AND the validity of comparative claims. Never accept trend statements without baseline verification."
+                    },
+                    {
+                        title: "Risk Assessment Integration",
+                        description: "An AI has generated a project timeline stating: 'Phase 1 completion: 30 days, Phase 2: 45 days, Phase 3: 60 days. Total project duration: 135 days.' The phases are sequential and depend on each other.",
+                        question: "What critical auditing element is missing from this timeline?",
+                        options: [
+                            "The timeline is too optimistic",
+                            "No buffer time or risk mitigation for dependencies and potential delays",
+                            "The phases should be parallel, not sequential",
+                            "The total duration calculation is wrong"
+                        ],
+                        correct: 1,
+                        xp: 200,
+                        feedback: "🎯 Excellent risk-aware auditing! Sequential phases need buffer time for dependencies, delays, and risk mitigation. AI often ignores real-world constraints.",
+                        keyLearning: "Auditing isn't just about accuracy - it's about completeness and risk assessment. Always check if AI outputs account for real-world variables."
+                    }
+                ]
+            }
+        };
+        
+        // Initialize particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Update UI elements
+        function updateUI() {
+            document.getElementById('playerLevel').textContent = gameState.level;
+            document.getElementById('playerXP').textContent = gameState.xp;
+            document.getElementById('playerStreak').textContent = gameState.streak;
+            
+            // Update achievements
+            const achievementElements = document.querySelectorAll('.achievement');
+            gameState.achievements.forEach(achievement => {
+                if (achievement === 'firstSteps') achievementElements[0].classList.add('unlocked');
+                if (achievement === 'verificationMaster') achievementElements[1].classList.add('unlocked');
+                if (achievement === 'auditExpert') achievementElements[2].classList.add('unlocked');
+                if (achievement === 'perfectScore') achievementElements[3].classList.add('unlocked');
+                if (achievement === 'speedDemon') achievementElements[4].classList.add('unlocked');
+            });
+        }
+        
+        // Add XP with animation
+        function addXP(amount) {
+            gameState.xp += amount;
+            
+            // Check for level up
+            const newLevel = xpThresholds.findIndex(threshold => gameState.xp < threshold);
+            if (newLevel > gameState.level) {
+                gameState.level = newLevel;
+                showLevelUpAnimation();
+            }
+            
+            updateUI();
+            showXPGain(amount);
+        }
+        
+        function showXPGain(amount) {
+            const xpGain = document.createElement('div');
+            xpGain.textContent = `+${amount} XP`;
+            xpGain.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: #06b6d4;
+                font-size: 2rem;
+                font-weight: 700;
+                z-index: 10000;
+                pointer-events: none;
+                animation: xpFloat 2s ease-out forwards;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes xpFloat {
+                    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+                    20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+                    100% { transform: translate(-50%, -100px) scale(1); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(xpGain);
+            
+            setTimeout(() => {
+                document.body.removeChild(xpGain);
+                document.head.removeChild(style);
+            }, 2000);
+        }
+        
+        function showLockedMessage(moduleId) {
+            const lockedMessage = document.createElement('div');
+            lockedMessage.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
+                    <div style="font-size: 1.8rem; font-weight: 700; color: #f59e0b; margin-bottom: 10px;">Module Locked</div>
+                    <div style="font-size: 1.1rem; color: rgba(255,255,255,0.8);">Complete Module A to unlock Module B</div>
+                </div>
+            `;
+            lockedMessage.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.95);
+                backdrop-filter: blur(20px);
+                border: 2px solid #f59e0b;
+                border-radius: 20px;
+                padding: 40px;
+                z-index: 10001;
+                animation: lockedPulse 2s ease-out forwards;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes lockedPulse {
+                    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+                    20% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+                    80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(lockedMessage);
+            
+            setTimeout(() => {
+                document.body.removeChild(lockedMessage);
+                document.head.removeChild(style);
+            }, 2000);
+        }
+        
+        function showLevelUpAnimation() {
+            const levelUp = document.createElement('div');
+            levelUp.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #06b6d4;">LEVEL UP!</div>
+                    <div style="font-size: 1.2rem; color: rgba(255,255,255,0.8);">Level ${gameState.level}</div>
+                </div>
+            `;
+            levelUp.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.9);
+                backdrop-filter: blur(20px);
+                border: 2px solid #06b6d4;
+                border-radius: 20px;
+                padding: 40px;
+                z-index: 10001;
+                animation: levelUpPulse 3s ease-out forwards;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes levelUpPulse {
+                    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                    20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+                    80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(levelUp);
+            
+            setTimeout(() => {
+                document.body.removeChild(levelUp);
+                document.head.removeChild(style);
+            }, 3000);
+        }
+        
+        function unlockAchievement(achievementId) {
+            if (!gameState.achievements.includes(achievementId)) {
+                gameState.achievements.push(achievementId);
+                updateUI();
+                
+                const achievementNames = {
+                    'firstSteps': 'First Steps',
+                    'verificationMaster': 'Verification Master',
+                    'auditExpert': 'Audit Expert',
+                    'perfectScore': 'Perfect Score',
+                    'speedDemon': 'Speed Demon'
+                };
+                
+                showAchievementUnlock(achievementNames[achievementId]);
+            }
+        }
+        
+        function showAchievementUnlock(name) {
+            const achievement = document.createElement('div');
+            achievement.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🏆</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;">Achievement Unlocked!</div>
+                    <div style="font-size: 1rem; color: rgba(255,255,255,0.8);">${name}</div>
+                </div>
+            `;
+            achievement.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(0,0,0,0.9);
+                backdrop-filter: blur(20px);
+                border: 2px solid #f59e0b;
+                border-radius: 16px;
+                padding: 20px;
+                z-index: 10001;
+                animation: achievementSlide 4s ease-out forwards;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes achievementSlide {
+                    0% { transform: translateX(100%); opacity: 0; }
+                    15% { transform: translateX(0); opacity: 1; }
+                    85% { transform: translateX(0); opacity: 1; }
+                    100% { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(achievement);
+            
+            setTimeout(() => {
+                document.body.removeChild(achievement);
+                document.head.removeChild(style);
+            }, 4000);
+        }
+        
+        function startModule(moduleId) {
+            // Check if module is locked
+            const moduleCard = document.querySelector(`[data-module="${moduleId}"]`);
+            if (moduleCard.classList.contains('locked')) {
+                // Show locked message
+                showLockedMessage(moduleId);
+                return;
+            }
+            
+            currentModule = moduleId;
+            startTime = Date.now();
+            const module = modules[moduleId];
+            
+            // Mark module as active
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-module="${moduleId}"]`).classList.add('active');
+            
+            // First steps achievement
+            if (gameState.achievements.length === 0) {
+                unlockAchievement('firstSteps');
+            }
+            
+            showLearningMaterial(module);
+        }
+        
+        let currentScenarioIndex = 0;
+        let moduleScenarios = [];
+        let reflectionAnswers = {};
+        let currentSectionIndex = 0;
+        let learningProgress = {};
+        
+        function showLearningMaterial(module) {
+            const overlay = document.getElementById('simulationOverlay');
+            const content = document.getElementById('simulationContent');
+            
+            currentSectionIndex = 0;
+            learningProgress = {};
+            
+            showLearningSection(module);
+            overlay.style.display = 'flex';
+        }
+        
+        function showLearningSection(module) {
+            const content = document.getElementById('simulationContent');
+            const material = module.learningMaterial;
+            const section = material.sections[currentSectionIndex];
+            const totalSections = material.sections.length;
+            
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #a5b4fc; font-size: 2rem; margin: 0;">${material.title}</h2>
+                    <div style="color: rgba(255,255,255,0.6); font-size: 1rem;">
+                        Section ${currentSectionIndex + 1} of ${totalSections}
+                    </div>
+                </div>
+                
+                <div class="progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 30px;">
+                    <div style="background: linear-gradient(90deg, #a5b4fc, #c7d2fe); height: 100%; width: ${((currentSectionIndex + 1) / totalSections) * 100}%; border-radius: 4px; transition: width 0.5s ease;"></div>
+                </div>
+                
+                <div class="learning-section" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(99, 102, 241, 0.3); padding: 40px; border-radius: 20px; margin-bottom: 30px;">
+                    <div class="section-header" style="display: flex; align-items: center; margin-bottom: 30px;">
+                        <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-right: 25px; box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);">
+                            ${section.icon}
+                        </div>
+                        <div>
+                            <h3 style="color: #ffffff; margin: 0; font-size: 1.8rem; font-weight: 800;">${section.title}</h3>
+                            <div style="color: rgba(255, 255, 255, 0.7); font-size: 1rem; margin-top: 8px;">Interactive Learning Module</div>
+                        </div>
+                    </div>
+                    
+                    <div class="learning-content">
+            `;
+            
+            section.content.forEach((item, index) => {
+                html += renderLearningContent(item, index);
+            });
+            
+            html += `
+                    </div>
+                </div>
+                
+                <div class="navigation-controls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+                    ${currentSectionIndex > 0 ? 
+                        '<button onclick="previousSection()" class="nav-btn" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 15px 25px; border-radius: 12px; cursor: pointer; font-weight: 600;">← Previous</button>' :
+                        '<div></div>'
+                    }
+                    
+                    ${currentSectionIndex < totalSections - 1 ? 
+                        '<button onclick="nextSection()" class="nav-btn" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 15px 25px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">Next Section →</button>' :
+                        '<button onclick="startAssessment()" class="nav-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 18px 30px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease;">🎯 Start Assessment</button>'
+                    }
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            
+            // Add hover effects to navigation buttons
+            setTimeout(() => {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-2px)';
+                        this.style.boxShadow = '0 10px 25px rgba(99, 102, 241, 0.4)';
+                    });
+                    btn.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = 'none';
+                    });
+                });
+            }, 100);
+        }
+        
+        function renderLearningContent(item, index) {
+            let html = '';
+            
+            switch(item.type) {
+                case 'explanation':
+                    html = `
+                        <div class="explanation-block" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 16px; margin: 20px 0; border-left: 4px solid #06b6d4;">
+                            <p style="color: rgba(255,255,255,0.9); margin: 0; line-height: 1.7; font-size: 1.1rem;">${item.text}</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'example':
+                    html = `
+                        <div class="example-block" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 25px; border-radius: 16px; margin: 20px 0;">
+                            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                <span style="font-size: 1.5rem; margin-right: 10px;">💡</span>
+                                <strong style="color: #fbbf24; font-size: 1.2rem;">${item.title}</strong>
+                            </div>
+                            <p style="color: rgba(255,255,255,0.9); margin: 0; line-height: 1.6;">${item.text}</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'warning':
+                    html = `
+                        <div class="warning-block" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 25px; border-radius: 16px; margin: 20px 0;">
+                            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                <span style="font-size: 1.5rem; margin-right: 10px;">⚠️</span>
+                                <strong style="color: #fca5a5; font-size: 1.2rem;">${item.title}</strong>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.9); white-space: pre-line; line-height: 1.6;">${item.text}</div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'steps':
+                    html = `
+                        <div class="steps-block" style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); padding: 25px; border-radius: 16px; margin: 20px 0;">
+                            <h4 style="color: #c4b5fd; margin: 0 0 20px 0; font-size: 1.2rem;">${item.title}</h4>
+                            <div class="steps-list">
+                                ${item.steps.map((step, i) => `
+                                    <div style="display: flex; align-items: flex-start; margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                                        <div style="background: linear-gradient(135deg, #8b5cf6, #a78bfa); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; margin-right: 15px; flex-shrink: 0;">${i + 1}</div>
+                                        <div style="color: rgba(255,255,255,0.9); line-height: 1.5;">${step}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'checklist':
+                    html = `
+                        <div class="checklist-block" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 25px; border-radius: 16px; margin: 20px 0;">
+                            <h4 style="color: #6ee7b7; margin: 0 0 20px 0; font-size: 1.2rem;">${item.title}</h4>
+                            <div class="checklist-items">
+                                ${item.items.map(checkItem => `
+                                    <div style="display: flex; align-items: center; margin: 12px 0; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                                        <span style="color: #10b981; font-size: 1.2rem; margin-right: 12px;">✓</span>
+                                        <div style="color: rgba(255,255,255,0.9);">${checkItem}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'comparison':
+                    html = `
+                        <div class="comparison-block" style="margin: 20px 0;">
+                            <h4 style="color: #c7d2fe; margin: 0 0 20px 0; font-size: 1.2rem; text-align: center;">${item.title}</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 12px;">
+                                    <h5 style="color: #fca5a5; margin: 0 0 15px 0;">${item.left.title}</h5>
+                                    ${item.left.items.map(leftItem => `
+                                        <div style="color: rgba(255,255,255,0.8); margin: 8px 0;">• ${leftItem}</div>
+                                    `).join('')}
+                                </div>
+                                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 20px; border-radius: 12px;">
+                                    <h5 style="color: #6ee7b7; margin: 0 0 15px 0;">${item.right.title}</h5>
+                                    ${item.right.items.map(rightItem => `
+                                        <div style="color: rgba(255,255,255,0.8); margin: 8px 0;">• ${rightItem}</div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'framework':
+                    html = `
+                        <div class="framework-block" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 25px; border-radius: 16px; margin: 20px 0;">
+                            <h4 style="color: #67e8f9; margin: 0 0 20px 0; font-size: 1.2rem;">${item.title}</h4>
+                            <div class="framework-categories" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                                ${item.categories.map(category => `
+                                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                                        <div style="color: rgba(255,255,255,0.9); line-height: 1.5;">${category}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'interactive':
+                    html = `
+                        <div class="interactive-block" style="background: rgba(99, 102, 241, 0.1); border: 2px solid rgba(99, 102, 241, 0.3); padding: 30px; border-radius: 16px; margin: 25px 0;">
+                            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                                <span style="font-size: 2rem; margin-right: 15px;">🤔</span>
+                                <h4 style="color: #a5b4fc; margin: 0; font-size: 1.3rem;">Quick Check</h4>
+                            </div>
+                            <p style="color: rgba(255,255,255,0.9); margin: 0 0 20px 0; font-size: 1.1rem; font-weight: 500;">${item.question}</p>
+                            
+                            <div class="interactive-options" data-question="${index}">
+                                ${item.options.map((option, optIndex) => `
+                                    <div class="interactive-option" data-option="${optIndex}" onclick="selectLearningOption(${index}, ${optIndex}, ${item.correct})" 
+                                         style="background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin: 10px 0; cursor: pointer; transition: all 0.3s ease;">
+                                        <div style="color: rgba(255,255,255,0.9);">${option}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="interactive-feedback" id="feedback-${index}" style="display: none; margin-top: 20px; padding: 20px; border-radius: 12px; animation: slideUp 0.5s ease;">
+                                <!-- Feedback will be inserted here -->
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            return html;
+        }
+        
+        function selectLearningOption(questionIndex, optionIndex, correctAnswer) {
+            const options = document.querySelectorAll(`[data-question="${questionIndex}"] .interactive-option`);
+            const feedback = document.getElementById(`feedback-${questionIndex}`);
+            const isCorrect = optionIndex === correctAnswer;
+            const currentQuestion = modules[currentModule].learningMaterial.sections[currentSectionIndex].content[questionIndex];
+            
+            // Clear previous selections
+            options.forEach(opt => {
+                opt.style.borderColor = 'rgba(255,255,255,0.1)';
+                opt.style.background = 'rgba(255,255,255,0.05)';
+            });
+            
+            // Highlight selected option
+            const selectedOption = options[optionIndex];
+            if (isCorrect) {
+                selectedOption.style.borderColor = '#10b981';
+                selectedOption.style.background = 'rgba(16, 185, 129, 0.2)';
+                feedback.style.background = 'rgba(16, 185, 129, 0.1)';
+                feedback.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                feedback.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 1.5rem; margin-right: 10px;">✅</span>
+                        <strong style="color: #10b981;">Correct!</strong>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.9); margin: 0;">${currentQuestion.feedback}</p>
+                `;
+                addXP(25); // Small XP reward for learning
+            } else {
+                selectedOption.style.borderColor = '#ef4444';
+                selectedOption.style.background = 'rgba(239, 68, 68, 0.2)';
+                feedback.style.background = 'rgba(239, 68, 68, 0.1)';
+                feedback.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                
+                // Get specific wrong answer feedback
+                const wrongFeedback = getWrongAnswerFeedbackForLearning(currentSectionIndex, questionIndex, optionIndex);
+                
+                feedback.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 1.5rem; margin-right: 10px;">❌</span>
+                        <strong style="color: #ef4444;">Not quite right</strong>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.9); margin: 0 0 15px 0;">${wrongFeedback}</p>
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid #10b981;">
+                        <p style="color: rgba(255,255,255,0.9); margin: 0 0 10px 0;"><strong>✓ Correct Answer:</strong> ${currentQuestion.options[correctAnswer]}</p>
+                        <p style="color: rgba(255,255,255,0.8); margin: 0;">${currentQuestion.feedback}</p>
+                    </div>
+                `;
+            }
+            
+            feedback.style.display = 'block';
+            learningProgress[`${currentSectionIndex}-${questionIndex}`] = isCorrect;
+        }
+        
+        function getWrongAnswerFeedbackForLearning(sectionIndex, questionIndex, selectedOption) {
+            // Define specific feedback for wrong answers in learning sections
+            const wrongAnswerFeedback = {
+                // Section 0 (What is AI Hallucination?) - Question 0
+                "0-0": {
+                    0: "While investor concerns are valid, the bigger issue is that AI hallucinations can affect ALL business communications and decisions, not just investor relations.",
+                    1: "Regulatory violations are definitely a concern, but AI hallucinations create broader risks across all business operations and stakeholder communications.",
+                    2: "Credibility damage is important, but AI hallucinations pose comprehensive risks including financial, legal, and operational consequences."
+                },
+                // Section 1 (The Verification Layer Process) - Question 0  
+                "1-0": {
+                    0: "Checking calculations is important, but you first need to verify the source exists! AI can fabricate survey names that sound real but don't exist.",
+                    2: "Asking colleagues introduces human error and 'telephone game' effects. Always verify against the actual authoritative source first.",
+                    3: "Never accept AI claims without verification! Even 'reasonable' numbers can be completely fabricated. Always check the source first."
+                },
+                // Section 2 (Spotting Subtle AI Bias) - Question 0
+                "2-0": {
+                    0: "This statement demonstrates clear bias! 'Prestigious institutions' creates educational elitism that excludes qualified candidates from diverse backgrounds.",
+                    1: "While this values diversity, the question asks which statement SHOWS bias. The 'prestigious institutions' option is the biased one.",
+                    3: "This statement is actually good and unbiased. The question asks which statement shows bias - look for coded language like 'prestigious.'"
+                },
+                // Section 3 (RAG System Verification) - Question 0
+                "3-0": {
+                    0: "Never trust RAG systems blindly! They can hallucinate document references, retrieve outdated versions, or misinterpret content.",
+                    2: "Asking HR introduces human error and memory issues. You need to verify against the actual policy document, not rely on hearsay.",
+                    3: "Never assume AI retrieved correctly! RAG systems can make mistakes in both retrieval and interpretation. Always verify the source."
+                }
+            };
+            
+            const key = `${sectionIndex}-${questionIndex}`;
+            return wrongAnswerFeedback[key]?.[selectedOption] || "This choice shows a common misconception. Let's look at why the correct approach is more effective.";
+        }
+        
+        function nextSection() {
+            currentSectionIndex++;
+            showLearningSection(modules[currentModule]);
+            
+            // Automatically scroll to top of simulation content
+            const simulationContent = document.querySelector('.simulation-content');
+            simulationContent.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        function previousSection() {
+            currentSectionIndex--;
+            showLearningSection(modules[currentModule]);
+            
+            // Automatically scroll to top of simulation content
+            const simulationContent = document.querySelector('.simulation-content');
+            simulationContent.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        function startAssessment() {
+            // Transition from learning to assessment
+            const module = modules[currentModule];
+            moduleScenarios = module.scenarios;
+            currentScenarioIndex = 0;
+            reflectionAnswers = {};
+            
+            showCurrentScenario();
+            
+            // Automatically scroll to top of simulation content
+            const simulationContent = document.querySelector('.simulation-content');
+            simulationContent.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        function showSimulation(module) {
+            const overlay = document.getElementById('simulationOverlay');
+            const content = document.getElementById('simulationContent');
+            
+            moduleScenarios = module.scenarios;
+            currentScenarioIndex = 0;
+            reflectionAnswers = {};
+            
+            showCurrentScenario();
+            overlay.style.display = 'flex';
+        }
+        
+        function showCurrentScenario() {
+            const content = document.getElementById('simulationContent');
+            const scenario = moduleScenarios[currentScenarioIndex];
+            const totalScenarios = moduleScenarios.length;
+            
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #a5b4fc; font-size: 2rem; margin: 0;">${modules[currentModule].title}</h2>
+                    <div style="color: rgba(255,255,255,0.6); font-size: 1rem;">
+                        Scenario ${currentScenarioIndex + 1} of ${totalScenarios}
+                    </div>
+                </div>
+                
+                <div class="progress-bar" style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-bottom: 30px;">
+                    <div style="background: linear-gradient(90deg, #a5b4fc, #c7d2fe); height: 100%; width: ${((currentScenarioIndex + 1) / totalScenarios) * 100}%; border-radius: 4px; transition: width 0.5s ease;"></div>
+                </div>
+                
+                <!-- Live Simulation Game Interface -->
+                <div class="live-simulation" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(99, 102, 241, 0.3); padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                    <div class="simulation-header" style="display: flex; align-items: center; margin-bottom: 25px;">
+                        <div style="background: linear-gradient(135deg, #ef4444, #dc2626); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-right: 20px; animation: pulse 2s infinite;">
+                            🚨
+                        </div>
+                        <div>
+                            <h3 style="color: #ffffff; margin: 0; font-size: 1.4rem;">${scenario.title}</h3>
+                            <div style="color: #fca5a5; font-size: 0.9rem; margin-top: 5px;">URGENT: Immediate Action Required</div>
+                        </div>
+                    </div>
+                    
+                    <div class="scenario-context" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #ef4444;">
+                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                            <span style="font-size: 1.2rem; margin-right: 10px;">📧</span>
+                            <strong style="color: #ffffff;">Incoming Alert</strong>
+                        </div>
+                        <p style="color: rgba(255,255,255,0.9); margin: 0; line-height: 1.6;">${scenario.description}</p>
+                    </div>
+                    
+                    <div class="timer-pressure" style="display: flex; align-items: center; justify-content: center; margin: 20px 0; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 10px;">
+                        <span style="font-size: 1.1rem; margin-right: 10px;">⏰</span>
+                        <span style="color: #fca5a5; font-weight: 600;">Decision needed within 60 seconds</span>
+                        <div id="countdown-${currentScenarioIndex}" style="margin-left: 15px; color: #ef4444; font-weight: 700; font-size: 1.2rem;">60</div>
+                    </div>
+                </div>
+                
+                <div class="decision-panel" style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 16px;">
+                    <h4 style="color: #c7d2fe; font-size: 1.3rem; margin-bottom: 20px; text-align: center;">
+                        🎯 What's your immediate response?
+                    </h4>
+                    
+                    <div class="action-buttons" data-scenario="${currentScenarioIndex}">
+                        ${scenario.options.map((option, optIndex) => `
+                            <div class="action-option" data-option="${optIndex}" onclick="selectAction(${currentScenarioIndex}, ${optIndex})" 
+                                 style="background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin: 10px 0; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;">
+                                <div style="display: flex; align-items: center;">
+                                    <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; margin-right: 15px; font-size: 1.1rem;">
+                                        ${String.fromCharCode(65 + optIndex)}
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="color: #ffffff; font-weight: 600; margin-bottom: 5px;">Action ${optIndex + 1}</div>
+                                        <div style="color: rgba(255,255,255,0.8); line-height: 1.4;">${option}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="confidence-meter" style="margin: 25px 0; text-align: center; display: none;" id="confidence-${currentScenarioIndex}">
+                        <div style="color: rgba(255,255,255,0.7); margin-bottom: 10px;">Confidence Level</div>
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            ${[1,2,3,4,5].map(level => `
+                                <div class="confidence-level" data-level="${level}" onclick="setConfidence(${level})" 
+                                     style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; color: rgba(255,255,255,0.6);">
+                                    ${level}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <button class="execute-btn" onclick="executeAction(${currentScenarioIndex}, ${scenario.correct}, ${scenario.xp})" disabled
+                            style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 18px 36px; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.3s ease; opacity: 0.5;">
+                        🚀 Execute Decision (+${scenario.xp} XP)
+                    </button>
+                    
+                    <div class="outcome-panel" id="outcome-${currentScenarioIndex}" style="display: none; margin-top: 25px; padding: 25px; border-radius: 16px; animation: slideUp 0.5s ease;">
+                        <!-- Outcome content will be inserted here -->
+                    </div>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            startCountdown(currentScenarioIndex);
+        }
+        
+        let countdownTimers = {};
+        let selectedAction = null;
+        let confidenceLevel = null;
+        
+        function startCountdown(scenarioIndex) {
+            let timeLeft = 60;
+            const countdownElement = document.getElementById(`countdown-${scenarioIndex}`);
+            
+            countdownTimers[scenarioIndex] = setInterval(() => {
+                timeLeft--;
+                countdownElement.textContent = timeLeft;
+                
+                // Change color as time runs out
+                if (timeLeft <= 10) {
+                    countdownElement.style.color = '#ef4444';
+                    countdownElement.style.animation = 'pulse 0.5s infinite';
+                } else if (timeLeft <= 30) {
+                    countdownElement.style.color = '#f59e0b';
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimers[scenarioIndex]);
+                    countdownElement.textContent = 'TIME UP!';
+                    // Auto-select first option if none selected
+                    if (selectedAction === null) {
+                        selectAction(scenarioIndex, 0);
+                        setTimeout(() => executeAction(scenarioIndex, modules[currentModule].scenarios[scenarioIndex].correct, modules[currentModule].scenarios[scenarioIndex].xp), 1000);
+                    }
+                }
+            }, 1000);
+        }
+        
+        function selectAction(scenarioIndex, actionIndex) {
+            const actionButtons = document.querySelectorAll(`[data-scenario="${scenarioIndex}"] .action-option`);
+            const executeBtn = document.querySelector('.execute-btn');
+            const confidenceMeter = document.getElementById(`confidence-${scenarioIndex}`);
+            
+            // Clear previous selections
+            actionButtons.forEach(btn => {
+                btn.style.borderColor = 'rgba(255,255,255,0.1)';
+                btn.style.background = 'rgba(255,255,255,0.05)';
+                btn.style.transform = 'none';
+            });
+            
+            // Highlight selected action
+            const selectedBtn = actionButtons[actionIndex];
+            selectedBtn.style.borderColor = '#06b6d4';
+            selectedBtn.style.background = 'rgba(6, 182, 212, 0.1)';
+            selectedBtn.style.transform = 'translateX(10px)';
+            
+            selectedAction = actionIndex;
+            
+            // Show confidence meter
+            confidenceMeter.style.display = 'block';
+            
+            // Enable execute button if confidence is set
+            if (confidenceLevel !== null) {
+                executeBtn.disabled = false;
+                executeBtn.style.opacity = '1';
+                executeBtn.style.transform = 'translateY(-2px)';
+                executeBtn.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.4)';
+            }
+        }
+        
+        function setConfidence(level) {
+            const confidenceLevels = document.querySelectorAll('.confidence-level');
+            const executeBtn = document.querySelector('.execute-btn');
+            
+            confidenceLevels.forEach((levelBtn, index) => {
+                if (index < level) {
+                    levelBtn.style.background = 'linear-gradient(135deg, #06b6d4, #0891b2)';
+                    levelBtn.style.color = 'white';
+                } else {
+                    levelBtn.style.background = 'rgba(255,255,255,0.1)';
+                    levelBtn.style.color = 'rgba(255,255,255,0.6)';
+                }
+            });
+            
+            confidenceLevel = level;
+            
+            // Enable execute button if action is selected
+            if (selectedAction !== null) {
+                executeBtn.disabled = false;
+                executeBtn.style.opacity = '1';
+                executeBtn.style.transform = 'translateY(-2px)';
+                executeBtn.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.4)';
+            }
+        }
+        
+        function getWrongAnswerFeedback(scenarioIndex, selectedOption) {
+            const wrongAnswerFeedback = {
+                0: { // Detecting AI Hallucinations
+                    0: "❌ Accepting AI reports without verification is extremely dangerous! This could lead to false financial statements, investor fraud, and regulatory violations. Always verify AI claims against source data.",
+                    2: "❌ Asking AI to regenerate won't fix the underlying data issue. The AI might hallucinate the same or different incorrect information. You need human verification against actual records.",
+                    3: "❌ Forwarding unverified AI reports could spread misinformation to stakeholders and damage credibility. This could result in poor business decisions based on false data."
+                },
+                1: { // Identifying Subtle AI Bias
+                    0: "❌ This preference creates significant bias! 'Traditional' and 'established' are coded language that can exclude qualified candidates from diverse backgrounds, potentially violating equal opportunity laws.",
+                    2: "❌ While age bias is a concern, this statement primarily creates educational and socioeconomic barriers that disproportionately affect underrepresented groups across all ages.",
+                    3: "❌ Geographic bias is only part of the problem. The bigger issue is the educational elitism that excludes qualified candidates who took alternative paths to leadership skills."
+                },
+                2: { // RAG Verification Challenge
+                    1: "❌ Never assume AI correctly retrieved information! RAG systems can hallucinate document references, misinterpret content, or pull from outdated versions. Always verify the source.",
+                    2: "❌ Asking colleagues introduces human error and 'telephone game' effects. You need to verify against the actual authoritative document, not rely on memory or hearsay.",
+                    3: "❌ Document titles can be misleading or similar. You must verify the actual content matches the AI's claim, not just that a document with that title exists."
+                },
+                3: { // Data Source Validation
+                    1: "❌ 23% might sound reasonable, but without verifying the underlying data, you could be accepting completely fabricated statistics that damage business credibility.",
+                    2: "❌ Customer count verification is only one piece. You also need to confirm the survey methodology, response rates, question phrasing, and statistical analysis were valid.",
+                    3: "❌ Asking AI for more details often leads to more hallucinated information. You need to verify against actual survey data and methodology documentation."
+                }
+            };
+            
+            return wrongAnswerFeedback[scenarioIndex]?.[selectedOption] || "This choice led to suboptimal outcomes. The verification layer requires systematic validation of all AI outputs against authoritative sources.";
+        }
+        
+        function nextScenario() {
+            currentScenarioIndex++;
+            showCurrentScenario();
+            
+            // Automatically scroll to top of simulation content to see the new alert
+            const simulationContent = document.querySelector('.simulation-content');
+            simulationContent.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        function completeModule() {
+            // Show module completion with reflection summary
+            const content = document.getElementById('simulationContent');
+            let html = `
+                <div style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
+                    <h2 style="color: #a5b4fc; margin-bottom: 20px;">Module Completed!</h2>
+                    <p style="color: rgba(255,255,255,0.8); margin-bottom: 30px;">
+                        Excellent work! You've demonstrated critical thinking and applied adult learning principles.
+                    </p>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 16px; margin: 30px 0; text-align: left;">
+                        <h3 style="color: #c7d2fe; margin-bottom: 20px;">📝 Your Learning Journey</h3>
+            `;
+            
+            Object.keys(reflectionAnswers).forEach((index, i) => {
+                html += `
+                    <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                        <strong style="color: #a5b4fc;">Scenario ${parseInt(index) + 1} - Initial Thoughts:</strong>
+                        <p style="color: rgba(255,255,255,0.7); margin: 10px 0 0 0; font-style: italic;">
+                            "${reflectionAnswers[index]}"
+                        </p>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                    <button onclick="closeSimulation()" class="start-btn" style="width: auto; padding: 15px 30px;">
+                        Return to Dashboard
+                    </button>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            updateProgress();
+        }
+        
+        function executeAction(scenarioIndex, correctAnswer, xpReward) {
+            // Stop countdown
+            if (countdownTimers[scenarioIndex]) {
+                clearInterval(countdownTimers[scenarioIndex]);
+            }
+            
+            const scenario = modules[currentModule].scenarios[scenarioIndex];
+            const isCorrect = selectedAction === correctAnswer;
+            const outcomePanel = document.getElementById(`outcome-${scenarioIndex}`);
+            const executeBtn = document.querySelector('.execute-btn');
+            
+            // Disable all interactions
+            executeBtn.disabled = true;
+            executeBtn.style.opacity = '0.5';
+            document.querySelectorAll('.action-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            // Calculate performance metrics
+            const timeElapsed = Date.now() - startTime;
+            const speedBonus = timeElapsed < 30000 ? 50 : 0; // Under 30 seconds
+            const confidenceBonus = confidenceLevel >= 4 ? 25 : 0;
+            
+            let outcomeHTML = '';
+            
+            if (isCorrect) {
+                outcomeHTML = `
+                    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1)); border: 2px solid #10b981;">
+                        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                            <div style="font-size: 3rem; margin-right: 15px;">✅</div>
+                            <div>
+                                <h3 style="color: #10b981; margin: 0;">Excellent Decision!</h3>
+                                <div style="color: rgba(255,255,255,0.8);">Crisis averted through proper verification</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                            <h4 style="color: #6ee7b7; margin-bottom: 15px;">🎯 Impact Analysis</h4>
+                            <p style="color: rgba(255,255,255,0.9); margin: 0;">${scenario.feedback}</p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                            <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="color: #10b981; font-size: 1.5rem; font-weight: 700;">+${xpReward}</div>
+                                <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Base XP</div>
+                            </div>
+                            ${speedBonus > 0 ? `
+                                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="color: #f59e0b; font-size: 1.5rem; font-weight: 700;">+${speedBonus}</div>
+                                    <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Speed Bonus</div>
+                                </div>
+                            ` : ''}
+                            ${confidenceBonus > 0 ? `
+                                <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="color: #8b5cf6; font-size: 1.5rem; font-weight: 700;">+${confidenceBonus}</div>
+                                    <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Confidence Bonus</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                `;
+                
+                // Award XP with bonuses
+                addXP(xpReward + speedBonus + confidenceBonus);
+                gameState.streak++;
+                
+                if (speedBonus > 0 && !gameState.achievements.includes('speedDemon')) {
+                    unlockAchievement('speedDemon');
+                }
+            } else {
+                outcomeHTML = `
+                    <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1)); border: 2px solid #ef4444;">
+                        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                            <div style="font-size: 3rem; margin-right: 15px;">❌</div>
+                            <div>
+                                <h3 style="color: #ef4444; margin: 0;">Critical Error!</h3>
+                                <div style="color: rgba(255,255,255,0.8);">This decision led to significant consequences</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                            <h4 style="color: #fca5a5; margin-bottom: 15px;">⚠️ What Went Wrong</h4>
+                            <p style="color: rgba(255,255,255,0.9); margin: 0;">${getWrongAnswerFeedback(scenarioIndex, selectedAction)}</p>
+                        </div>
+                        
+                        <div style="background: rgba(6, 182, 212, 0.1); padding: 20px; border-radius: 12px; margin: 20px 0;">
+                            <h4 style="color: #67e8f9; margin-bottom: 15px;">🔍 Correct Approach</h4>
+                            <p style="color: rgba(255,255,255,0.8); margin: 0;"><strong>Option ${String.fromCharCode(65 + correctAnswer)}:</strong> ${scenario.options[correctAnswer]}</p>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 15px; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+                            <div style="color: #ef4444; font-size: 1.2rem; font-weight: 700;">No XP Awarded</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Learn from this mistake</div>
+                        </div>
+                `;
+                
+                gameState.streak = 0;
+            }
+            
+            outcomeHTML += `
+                        <div style="margin-top: 25px; padding: 20px; background: rgba(6, 182, 212, 0.1); border-radius: 12px;">
+                            <h4 style="color: #67e8f9; margin-bottom: 15px;">💡 Key Learning</h4>
+                            <p style="color: rgba(255,255,255,0.8); margin: 0;">${scenario.keyLearning || 'This scenario demonstrates the importance of systematic verification in preventing costly errors.'}</p>
+                        </div>
+                        
+                        ${currentScenarioIndex < moduleScenarios.length - 1 ? 
+                            '<button onclick="nextScenario()" class="start-btn" style="margin-top: 25px; width: 100%; padding: 15px;">Continue to Next Challenge →</button>' :
+                            '<button onclick="completeModule()" class="start-btn" style="margin-top: 25px; width: 100%; padding: 15px;">Complete Module 🎉</button>'
+                        }
+                    </div>
+                `;
+            
+            outcomePanel.innerHTML = outcomeHTML;
+            outcomePanel.style.display = 'block';
+            
+            updateProgress();
+            
+            // Reset for next scenario
+            selectedAction = null;
+            confidenceLevel = null;
+        }
+        
+        function updateProgress() {
+            if (!currentModule) return;
+            
+            // Calculate progress based on current scenario index + 1 (completed scenarios)
+            const completedScenarios = currentScenarioIndex + 1;
+            const totalScenarios = modules[currentModule].scenarios.length;
+            const progress = (completedScenarios / totalScenarios) * 100;
+            
+            gameState.moduleProgress[currentModule] = progress;
+            
+            const moduleCard = document.querySelector(`[data-module="${currentModule}"]`);
+            const progressRing = moduleCard.querySelector('.progress-ring-fill');
+            const progressText = moduleCard.querySelector('.progress-text');
+            const xpBar = moduleCard.querySelector('.xp-fill');
+            const startBtn = moduleCard.querySelector('.start-btn');
+            
+            // Update circular progress
+            const circumference = 2 * Math.PI * 36;
+            const strokeDasharray = (progress / 100) * circumference;
+            progressRing.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+            progressText.textContent = `${Math.round(progress)}%`;
+            
+            // Update XP bar
+            xpBar.style.width = `${progress}%`;
+            
+            if (progress >= 100) {
+                startBtn.innerHTML = '<span>✅ Module Completed</span>';
+                startBtn.classList.add('completed');
+                moduleCard.classList.add('completed');
+                
+                // Unlock next module immediately
+                if (currentModule === 'verification') {
+                    const auditingCard = document.querySelector('[data-module="auditing"]');
+                    auditingCard.classList.remove('locked');
+                    auditingCard.querySelector('.start-btn').disabled = false;
+                    auditingCard.querySelector('.start-btn').innerHTML = '<span>Start Module B</span>';
+                    auditingCard.querySelector('.progress-text').textContent = '0%';
+                    
+                    // Update the game state to reflect module completion
+                    gameState.moduleProgress.verification = 100;
+                    
+                    unlockAchievement('verificationMaster');
+                } else if (currentModule === 'auditing') {
+                    unlockAchievement('auditExpert');
+                }
+                
+                // Perfect score achievement
+                const correctAnswers = document.querySelectorAll('.option.correct').length;
+                const totalQuestions = modules[currentModule].scenarios.length;
+                if (correctAnswers === totalQuestions) {
+                    unlockAchievement('perfectScore');
+                }
+                
+                // Module completion XP bonus
+                addXP(modules[currentModule].xpReward - (modules[currentModule].scenarios.reduce((sum, s) => sum + s.xp, 0)));
+            }
+            
+            updateUI();
+        }
+        
+        function closeSimulation() {
+            document.getElementById('simulationOverlay').style.display = 'none';
+            document.querySelectorAll('.module-card').forEach(card => {
+                card.classList.remove('active');
+            });
+        }
+        
+        // Glossary Terms Database
+        const glossaryTerms = {
+            "AI Hallucination": "When artificial intelligence generates false, misleading, or fabricated information that appears credible but has no basis in reality or training data.",
+            "Verification Layer": "The human oversight process that validates AI outputs against authoritative sources before accepting or acting on AI-generated content.",
+            "RAG (Retrieval-Augmented Generation)": "A technique where AI systems retrieve relevant information from databases before generating responses, combining retrieval and generation capabilities.",
+            "Bias Detection": "The systematic process of identifying unfair, discriminatory, or skewed patterns in AI outputs that could lead to inequitable treatment of different groups.",
+            "Compliance Auditing": "The systematic review of AI-generated content to ensure it meets legal, regulatory, and organizational policy requirements.",
+            "Cross-Reference Validation": "The practice of checking AI claims against multiple authoritative sources to verify accuracy and consistency.",
+            "Source Document Verification": "Confirming that AI references to documents, policies, or data actually exist and contain the claimed information.",
+            "Mathematical Verification": "Independent calculation and validation of numerical claims, percentages, and statistical information provided by AI systems.",
+            "Systematic Auditing": "A structured, repeatable process for reviewing AI outputs across multiple dimensions including accuracy, compliance, and risk assessment.",
+            "Data Accuracy": "The degree to which AI-generated information correctly represents the underlying facts, figures, and relationships in source data.",
+            "Risk Assessment": "Evaluation of potential negative consequences and mitigation strategies when AI outputs are used for business decisions.",
+            "Regulatory Compliance": "Ensuring AI-generated content adheres to laws, regulations, and industry standards such as GDPR, privacy laws, and financial regulations.",
+            "Human Accountability": "The principle that humans remain responsible for decisions and outcomes, even when AI systems are used in the decision-making process.",
+            "Content Validation": "The comprehensive review process that checks AI outputs for factual accuracy, logical consistency, and appropriateness for intended use.",
+            "Policy Verification": "Confirming that AI-generated policies and procedures align with organizational guidelines, legal requirements, and best practices.",
+            "Baseline Data": "Historical or reference information used to validate AI claims about trends, improvements, or comparative performance metrics.",
+            "Structured Verification": "A systematic approach to checking AI outputs using predefined criteria, checklists, and validation procedures.",
+            "Quality Control": "Ongoing processes and standards designed to maintain consistent accuracy and reliability in AI-assisted work products.",
+            "Error Detection": "The ability to identify mistakes, inconsistencies, or problematic content in AI-generated materials before they cause harm.",
+            "Documentation Requirements": "Legal and organizational mandates for maintaining records, approvals, and audit trails for AI-assisted decisions and content."
+        };
+        
+        function toggleGlossary() {
+            const overlay = document.getElementById('glossaryOverlay');
+            if (overlay.style.display === 'none' || overlay.style.display === '') {
+                showGlossary();
+            } else {
+                closeGlossary();
+            }
+        }
+        
+        function showGlossary() {
+            const overlay = document.getElementById('glossaryOverlay');
+            populateGlossary();
+            overlay.style.display = 'flex';
+        }
+        
+        function closeGlossary() {
+            const overlay = document.getElementById('glossaryOverlay');
+            overlay.style.display = 'none';
+        }
+        
+        function populateGlossary() {
+            const termsContainer = document.getElementById('glossaryTerms');
+            let html = '';
+            
+            Object.entries(glossaryTerms).forEach(([term, definition]) => {
+                html += `
+                    <div class="glossary-term" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 16px; margin-bottom: 20px; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(99, 102, 241, 0.1)'; this.style.borderColor='rgba(99, 102, 241, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+                        <h3 style="color: #a5b4fc; font-size: 1.3rem; margin: 0 0 15px 0; font-weight: 700;">${term}</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin: 0; line-height: 1.6; font-size: 1rem;">${definition}</p>
+                    </div>
+                `;
+            });
+            
+            termsContainer.innerHTML = html;
+        }
+        
+        function filterGlossary() {
+            const searchTerm = document.getElementById('glossarySearch').value.toLowerCase();
+            const termElements = document.querySelectorAll('.glossary-term');
+            
+            termElements.forEach(element => {
+                const termTitle = element.querySelector('h3').textContent.toLowerCase();
+                const termDefinition = element.querySelector('p').textContent.toLowerCase();
+                
+                if (termTitle.includes(searchTerm) || termDefinition.includes(searchTerm)) {
+                    element.style.display = 'block';
+                    // Highlight matching text
+                    if (searchTerm) {
+                        element.style.background = 'rgba(6, 182, 212, 0.1)';
+                        element.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+                    }
+                } else {
+                    element.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            updateUI();
+            
+            // Close simulation when clicking outside
+            document.getElementById('simulationOverlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSimulation();
+                }
+            });
+            
+            // Close glossary when clicking outside
+            document.getElementById('glossaryOverlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeGlossary();
+                }
+            });
+            
+            // Add hover effect to glossary button
+            const glossaryBtn = document.querySelector('.glossary-btn');
+            glossaryBtn.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.boxShadow = '0 15px 35px rgba(99, 102, 241, 0.6)';
+            });
+            glossaryBtn.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = '0 10px 25px rgba(99, 102, 241, 0.4)';
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99002dcd32a83fa1',t:'MTc2MDcwODEyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
